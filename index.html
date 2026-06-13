@@ -9,102 +9,24 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&amp;family=Inter:wght@400;600&amp;display=swap" rel="stylesheet">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap');
-        
-        body {
-            font-family: 'Inter', system-ui, sans-serif;
-            background: #000;
-            color: #fff;
-            position: relative;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-
+        body { font-family: 'Inter', system-ui, sans-serif; background: #000; color: #fff; position: relative; line-height: 1.5; overflow-x: hidden; }
         .script-font { font-family: 'Cinzel', serif; letter-spacing: 0.05em; }
+        .chrome { color: #d0d0d0; text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 -1px 1px rgba(255,255,255,0.2); }
+        .small-btn { background: linear-gradient(145deg, #e0e0e0, #a0a0a0); color: #000; padding: 10px 16px; font-size: 0.9rem; box-shadow: 0 0 15px rgba(139, 0, 0, 0.5); transition: all 0.2s; }
+        .small-btn:hover { transform: scale(1.03); box-shadow: 0 0 22px rgba(139, 0, 0, 0.7); }
+        
+        .ritual-watermark { content: 'DEATHSONG DEATHSONG DEATHSONG DEATHSONG DEATHSONG'; position: absolute; top: 0; left: 0; right: 0; bottom: 0; color: rgba(192,192,192,0.05); font-size: 7rem; font-family: 'Cinzel', serif; white-space: nowrap; overflow: hidden; line-height: 1; transform: rotate(-8deg); pointer-events: none; z-index: -1; animation: deathscroll 45s linear infinite; }
+        @keyframes deathscroll { 0% { transform: translateX(0) rotate(-8deg); } 100% { transform: translateX(-40%) rotate(-8deg); } }
 
-        .chrome {
-            color: #d0d0d0;
-            text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 -1px 1px rgba(255,255,255,0.2);
-        }
+        .glow { position: relative; } .glow::after { content: ''; position: absolute; inset: -30px; background: radial-gradient(circle, rgba(185,28,28,0.2) 0%, transparent 70%); opacity: 0.5; z-index: -1; animation: pulse-glow 6s ease-in-out infinite; }
+        @keyframes pulse-glow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
 
-        .small-btn {
-            background: linear-gradient(145deg, #e0e0e0, #a0a0a0);
-            color: #000;
-            padding: 10px 16px;
-            font-size: 0.9rem;
-            box-shadow: 0 0 15px rgba(139, 0, 0, 0.5);
-            transition: all 0.2s;
-        }
-
-        .small-btn:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 22px rgba(139, 0, 0, 0.7);
-        }
-
-        /* Subtle animated scrolling background text */
-        .ritual-watermark {
-            content: 'DEATHSONG DEATHSONG DEATHSONG DEATHSONG DEATHSONG';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            color: rgba(192,192,192,0.06);
-            font-size: 6.5rem;
-            font-family: 'Cinzel', serif;
-            white-space: nowrap;
-            overflow: hidden;
-            line-height: 1;
-            transform: rotate(-8deg);
-            pointer-events: none;
-            z-index: -1;
-            animation: deathscroll 60s linear infinite;
-        }
-
-        @keyframes deathscroll {
-            0% { transform: translateX(0) rotate(-8deg); }
-            100% { transform: translateX(-35%) rotate(-8deg); }
-        }
-
-        /* Light subtle glow and particles feel */
-        .glow {
-            position: relative;
-        }
-        .glow::after {
-            content: '';
-            position: absolute;
-            inset: -20px;
-            background: radial-gradient(circle, rgba(185,28,28,0.15) 0%, transparent 70%);
-            opacity: 0.6;
-            z-index: -1;
-            animation: pulse-glow 8s ease-in-out infinite;
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.7; }
-        }
-
-        .video-overlay {
-            position: relative;
-        }
-
-        .play-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 4.8rem;
-            color: rgba(239, 68, 68, 0.95);
-            text-shadow: 0 0 40px rgba(185, 28, 28, 0.9);
-            pointer-events: none;
-            transition: transform 0.3s ease;
-        }
-
-        .video-overlay:hover .play-icon {
-            transform: translate(-50%, -50%) scale(1.15);
-        }
-
-        canvas { width: 100%; height: 70px; filter: contrast(1.2); }
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; opacity: 0.15; }
+        canvas { width: 100%; height: 70px; filter: contrast(1.3); }
     </style>
 </head>
 <body class="min-h-screen pb-12">
+    <canvas id="particles"></canvas>
     <div class="ritual-watermark"></div>
 
     <div class="max-w-md mx-auto px-5 pt-16 text-center">
@@ -112,12 +34,12 @@
         <p class="script-font text-5xl font-black tracking-widest text-red-500">FREQUENCY</p>
         <p class="mt-4 text-zinc-400 text-lg">WILLIAM DEATHSONG • LAYERS OF GROTESQUE TRUTH</p>
 
-        <!-- Creator's Featured -->
+        <!-- Featured -->
         <div class="mt-14">
             <p class="uppercase text-xs text-red-500 mb-3 tracking-widest">CREATOR'S FEATURED</p>
             <div onclick="playFeatured()" class="video-overlay cursor-pointer border-6 border-[#440000] rounded-2xl overflow-hidden glow">
                 <video playsinline class="w-full pointer-events-none" muted>
-                    <source src="featured.mp4" type="video/mp4">
+                    <source src="https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" type="video/mp4">
                 </video>
                 <i class="play-icon fa-solid fa-play"></i>
             </div>
@@ -133,35 +55,40 @@
                 <div onclick="showLayer('vulgar')" class="px-6 py-3 hover:bg-zinc-900 cursor-pointer">VULGAR GRACE</div>
                 <div onclick="showLayer('stormbound')" class="px-6 py-3 hover:bg-zinc-900 cursor-pointer">STORMBOUND</div>
                 <div onclick="showLayer('persistence')" class="px-6 py-3 hover:bg-zinc-900 cursor-pointer">PERSISTENCE</div>
-                <div onclick="showLayer('jamhouse')" class="px-6 py-3 hover:bg-zinc-900 cursor-pointer">JAM HOUSE</div>
-                <div onclick="showLayer('nobody')" class="px-6 py-3 hover:bg-zinc-900 cursor-pointer">NOBODY</div>
                 <div onclick="showLayer('mindvirus')" class="px-6 py-3 hover:bg-zinc-900 cursor-pointer">TRANS TESTICLE MIND VIRUS DEFENDER</div>
             </div>
         </div>
 
-        <!-- Ritual Audio -->
         <div class="mt-12 bg-zinc-950 border border-zinc-700 rounded-3xl p-4">
             <div class="flex justify-between items-center mb-3">
                 <span class="text-xs">RITUAL AUDIO</span>
-                <button onclick="toggleMusic()" id="music-btn" class="small-btn text-xs px-4">PLAY</button>
+                <button onclick="toggleMusic()" id="music-btn" class="small-btn text-xs px-4">PLAY RITUAL</button>
             </div>
             <canvas id="visualizer"></canvas>
         </div>
 
-        <!-- Audio Vault -->
         <div class="mt-8 bg-zinc-950 border border-zinc-700 rounded-3xl p-4">
             <div class="flex justify-between items-center mb-3">
-                <span class="text-xs">AUDIO VAULT - SONGS & PODCASTS</span>
-                <button onclick="showAudioVault()" class="small-btn text-xs px-4">OPEN VAULT</button>
+                <span class="text-xs">AUDIO VAULT</span>
+                <button onclick="showAudioLibrary()" class="small-btn text-xs px-4">OPEN VAULT</button>
             </div>
         </div>
 
-        <div class="mt-16 text-xs text-zinc-500">
-            © DEATHSONG FREQUENCY / WILLIAM DEATHSONG
+        <!-- Ritual Spin -->
+        <div class="mt-8 bg-zinc-950 border border-red-900 rounded-3xl p-6">
+            <button onclick="spinRitual()" class="small-btn w-full text-xl py-4">SPIN THE RITUAL 💀</button>
+            <p id="spin-result" class="mt-4 text-red-500 font-medium min-h-[1.5em]"></p>
         </div>
+
+        <!-- E-Slots Machine Button -->
+        <div class="mt-4">
+            <button onclick="openSlots()" class="small-btn w-full text-xl py-4 bg-red-900 hover:bg-red-800 text-white">OPEN E-SLOTS MACHINE 🎰</button>
+        </div>
+
+        <div class="mt-16 text-xs text-zinc-500">© DEATHSONG FREQUENCY / WILLIAM DEATHSONG</div>
     </div>
 
-    <!-- Layer Modal -->
+    <!-- Modal -->
     <div id="layer-modal" class="hidden fixed inset-0 bg-black/95 z-50 overflow-y-auto">
         <div class="max-w-md mx-auto p-5">
             <button onclick="closeLayerModal()" class="text-3xl mb-6">✕</button>
@@ -171,15 +98,14 @@
     </div>
 
     <audio id="ritual-audio" loop></audio>
-    <audio id="vault-audio" preload="metadata"></audio>
+    <audio id="vault-audio" loop></audio>
 
     <script>
-        // ====================== VIDEO LIBRARY (root folder) ======================
         const videoLibrary = [
-            { layer: "vulgar", title: "Vulgar Grace", src: "vulgar.mp4" },
-            { layer: "stormbound", title: "Stormbound", src: "stormbound.mp4" },
-            { layer: "persistence", title: "Persistence", src: "persistence.mp4" },
-            { layer: "mindvirus", title: "Trans Testicle Mind Virus Defender", src: "transmindvirus.mp4" }
+            { layer: "vulgar", title: "Vulgar Grace", src: "https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" },
+            { layer: "stormbound", title: "Stormbound", src: "https://drive.google.com/uc?export=download&id=1QVNZRNaWcY1Cv_wK_YvU5KWLvKKrA9EY" },
+            { layer: "persistence", title: "Persistence", src: "https://drive.google.com/uc?export=download&id=1T4T1KYTNl9PrRvdGOz-tH_XTMVkVlplU" },
+            { layer: "mindvirus", title: "Trans Testicle Mind Virus Defender", src: "https://drive.google.com/uc?export=download&id=1PQO05RTYTOhyBKdfvrVUwYGur3g4p8UK" }
         ];
 
         const layers = {};
@@ -187,75 +113,25 @@
             if (!layers[v.layer]) layers[v.layer] = { title: v.layer.toUpperCase().replace(/_/g, ' '), videos: [] };
             layers[v.layer].videos.push({ title: v.title, src: v.src });
         });
+        ["jamhouse","nobody"].forEach(key => layers[key] = { title: key.toUpperCase().replace(/_/g, ' '), videos: [] });
 
-        ["jamhouse","nobody"].forEach(key => {
-            if (!layers[key]) layers[key] = { title: key.toUpperCase().replace(/_/g, ' '), videos: [] };
-        });
+        const featuredVideo = { title: "Featured Ritual", src: "https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" };
 
-        const featuredVideo = { title: "Featured Ritual", src: "featured.mp4" };
-
-        // ====================== AUDIO VAULT ======================
         const audioLibrary = {
             songs: [
-                { title: "Vulgar Grace", src: "vulgar.mp3" },
-                { title: "Stormbound", src: "stormbound.mp3" },
-                { title: "Persistence", src: "persistence.mp3" },
-                { title: "Trans Mind Virus Defender", src: "transmindvirus.mp3" }
-                // Add more songs here
+                { title: "Vulgar Grace", src: "https://drive.google.com/uc?export=download&id=1t_57PmeUs2aFkZnTn69aIDZ6dByPe7E7" },
+                { title: "Stormbound", src: "https://drive.google.com/uc?export=download&id=19RTUAwJnCSSFdsbEn7QQlB4gkn5Vgx79" },
+                { title: "Persistence", src: "https://drive.google.com/uc?export=download&id=134rQi7mvV0CRmD8AiiK_S_hbmrfHUaJK" },
+                { title: "Trans Testicle Mind Virus Defender", src: "https://drive.google.com/uc?export=download&id=14k5Q21WNeYFWDKtfZosUZ_4LyRivYtBJ" }
             ],
-            podcasts: [
-                { title: "Podcast #1", src: "podcast1.mp3" },
-                { title: "Podcast #2", src: "podcast2.mp3" },
-                { title: "Podcast #3", src: "podcast3.mp3" },
-                { title: "Podcast #4", src: "podcast4.mp3" }
-                // Add more
-            ]
+            podcasts: []
         };
 
-        let currentVaultAudio = null;
-
-        function playVaultAudio(src, title) {
-            const vaultAudio = document.getElementById('vault-audio');
-            if (currentVaultAudio) currentVaultAudio.pause();
-            
-            vaultAudio.src = src;
-            vaultAudio.play().catch(e => console.log("Playback error:", e));
-            currentVaultAudio = vaultAudio;
-
-            // Update modal with current playing
-            document.getElementById('modal-title').textContent = title + " - NOW PLAYING";
-        }
-
-        function showAudioVault() {
-            const layerModal = document.getElementById('layer-modal');
-            document.getElementById('modal-title').textContent = "AUDIO VAULT";
-            
-            let html = `<div class="mb-6"><h3 class="text-red-500 mb-2">SONGS</h3>`;
-            audioLibrary.songs.forEach(song => {
-                html += `<div onclick="playVaultAudio('${song.src}', '${song.title}')" class="cursor-pointer border border-zinc-700 hover:border-red-600 p-4 rounded-2xl flex items-center gap-4">
-                    <i class="fa-solid fa-music text-red-500"></i>
-                    <div><p class="font-medium">${song.title}</p></div>
-                </div>`;
-            });
-            
-            html += `</div><div><h3 class="text-red-500 mb-2">PODCASTS</h3>`;
-            audioLibrary.podcasts.forEach(pod => {
-                html += `<div onclick="playVaultAudio('${pod.src}', '${pod.title}')" class="cursor-pointer border border-zinc-700 hover:border-red-600 p-4 rounded-2xl flex items-center gap-4">
-                    <i class="fa-solid fa-podcast text-red-500"></i>
-                    <div><p class="font-medium">${pod.title}</p></div>
-                </div>`;
-            });
-            html += `</div><button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE VAULT</button>`;
-            
-            document.getElementById('playlist').innerHTML = html;
-            layerModal.classList.remove('hidden');
-        }
-
-        // ====================== AUDIO + VISUALIZER ======================
         let audioContext, analyser, source, dataArray, isPlaying = false;
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
         const ritualAudio = document.getElementById('ritual-audio');
+        const vaultAudio = document.getElementById('vault-audio');
 
         function initVisualizer() {
             if (audioContext) return;
@@ -287,70 +163,92 @@
             initVisualizer();
             if (isPlaying) {
                 ritualAudio.pause();
-                document.getElementById('music-btn').textContent = 'PLAY';
+                document.getElementById('music-btn').textContent = 'PLAY RITUAL';
             } else {
-                ritualAudio.play();
+                ritualAudio.play().catch(() => { alert("Tap again - Google Drive first play needs permission"); });
                 document.getElementById('music-btn').textContent = 'PAUSE';
                 drawVisualizer();
             }
             isPlaying = !isPlaying;
         }
 
-        // ====================== FEATURED + LAYERS ======================
+        function playVaultAudio(src) {
+            vaultAudio.pause();
+            vaultAudio.src = src;
+            vaultAudio.play().catch(() => alert("Tap again - Drive first play permission"));
+        }
+
+        function showAudioLibrary() {
+            let html = `<h3 class="text-xl mb-4 text-red-500">SONGS</h3>`;
+            audioLibrary.songs.forEach(song => {
+                html += `<div onclick="playVaultAudio('\( {song.src}')" class="cursor-pointer border border-zinc-700 hover:border-red-600 p-4 rounded-2xl flex items-center gap-4"><i class="fa-solid fa-play text-red-500"></i><div><p class="font-medium"> \){song.title}</p></div></div>`;
+            });
+            html += `<button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE VAULT</button>`;
+            document.getElementById('modal-title').textContent = "AUDIO VAULT";
+            document.getElementById('playlist').innerHTML = html;
+            document.getElementById('layer-modal').classList.remove('hidden');
+        }
+
         function playFeatured() {
-            const html = `
-                <video controls autoplay playsinline class="w-full rounded-2xl border-4 border-red-900">
-                    <source src="${featuredVideo.src}" type="video/mp4">
-                </video>
-                <button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE</button>`;
+            const html = `<video controls autoplay playsinline class="w-full rounded-2xl border-4 border-red-900"><source src="${featuredVideo.src}" type="video/mp4"></video><button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE</button>`;
             document.getElementById('modal-title').textContent = featuredVideo.title;
             document.getElementById('playlist').innerHTML = html;
             document.getElementById('layer-modal').classList.remove('hidden');
         }
 
-        function toggleDropdown() {
-            document.getElementById('layers-dropdown').classList.toggle('hidden');
-        }
+        function toggleDropdown() { document.getElementById('layers-dropdown').classList.toggle('hidden'); }
 
         function showLayer(key) {
             const layer = layers[key];
             document.getElementById('modal-title').textContent = layer.title;
             let html = layer.videos.length ? '' : '<p class="text-zinc-500 p-4">No videos yet.</p>';
             layer.videos.forEach(v => {
-                html += `<div onclick="playVideo('${v.src}')" class="cursor-pointer border border-zinc-700 hover:border-red-600 p-4 rounded-2xl flex items-center gap-4">
-                    <i class="fa-solid fa-play text-red-500"></i>
-                    <div><p class="font-medium">${v.title}</p></div>
-                </div>`;
+                html += `<div onclick="playVideo('\( {v.src}')" class="cursor-pointer border border-zinc-700 hover:border-red-600 p-4 rounded-2xl flex items-center gap-4"><i class="fa-solid fa-play text-red-500"></i><div><p class="font-medium"> \){v.title}</p></div></div>`;
             });
             document.getElementById('playlist').innerHTML = html;
             document.getElementById('layer-modal').classList.remove('hidden');
         }
 
-        function closeLayerModal() {
-            document.getElementById('layer-modal').classList.add('hidden');
-            // Optional: pause vault audio on close
-            const vaultAudio = document.getElementById('vault-audio');
-            if (vaultAudio) vaultAudio.pause();
-        }
+        function closeLayerModal() { document.getElementById('layer-modal').classList.add('hidden'); }
 
         function playVideo(src) {
-            const html = `
-                <video controls autoplay playsinline class="w-full rounded-2xl border-4 border-red-900">
-                    <source src="${src}" type="video/mp4">
-                </video>
-                <button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE</button>`;
+            const html = `<video controls autoplay playsinline class="w-full rounded-2xl border-4 border-red-900"><source src="${src}" type="video/mp4"></video><button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE</button>`;
             document.getElementById('playlist').innerHTML = html;
         }
+
+        function spinRitual() {
+            const results = ["VULGAR GRACE CONSUMES ALL", "STORMBOUND UNLEASHED", "PERSISTENCE DEVOURS", "MIND VIRUS DEFENDED", "GROTESQUE TRUTH REVEALED 💀"];
+            document.getElementById('spin-result').textContent = results[Math.floor(Math.random() * results.length)];
+            const keys = Object.keys(layers);
+            if (keys.length) showLayer(keys[Math.floor(Math.random() * keys.length)]);
+        }
+
+        function openSlots() {
+            window.open('https://beyond-the-prompt.github.io/Deathsong-Frequency-sSlots/', '_blank');
+        }
+
+        // Particles
+        const pCanvas = document.getElementById('particles');
+        const pCtx = pCanvas.getContext('2d');
+        function resizeParticles() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeParticles);
+        resizeParticles();
+        function drawParticles() {
+            requestAnimationFrame(drawParticles);
+            pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
+            for (let i = 0; i < 40; i++) {
+                const x = (Date.now() / 40 + i * 40) % (pCanvas.width + 100) - 50;
+                const y = (i * 25) % pCanvas.height;
+                pCtx.fillStyle = `rgba(180, 30, 30, 0.5)`;
+                pCtx.fillRect(x, y, 1.5, 1.5);
+            }
+        }
+        drawParticles();
 
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#layers-dropdown') && !e.target.closest('button[onclick="toggleDropdown()"]')) {
                 document.getElementById('layers-dropdown').classList.add('hidden');
             }
-        });
-
-        // Auto set canvas size
-        window.addEventListener('load', () => {
-            canvas.width = canvas.offsetWidth;
         });
     </script>
 </body>
