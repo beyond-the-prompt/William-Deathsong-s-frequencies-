@@ -14,38 +14,30 @@
         .chrome { color: #d0d0d0; text-shadow: 0 1px 1px rgba(0,0,0,0.6), 0 -1px 1px rgba(255,255,255,0.2); }
         .small-btn { background: linear-gradient(145deg, #e0e0e0, #a0a0a0); color: #000; padding: 10px 16px; font-size: 0.9rem; box-shadow: 0 0 15px rgba(139, 0, 0, 0.5); transition: all 0.2s; }
         .small-btn:hover { transform: scale(1.03); box-shadow: 0 0 22px rgba(139, 0, 0, 0.7); }
-        
-        .ritual-watermark { content: 'DEATHSONG DEATHSONG DEATHSONG DEATHSONG DEATHSONG'; position: absolute; top: 0; left: 0; right: 0; bottom: 0; color: rgba(192,192,192,0.05); font-size: 7rem; font-family: 'Cinzel', serif; white-space: nowrap; overflow: hidden; line-height: 1; transform: rotate(-8deg); pointer-events: none; z-index: -1; animation: deathscroll 45s linear infinite; }
-        @keyframes deathscroll { 0% { transform: translateX(0) rotate(-8deg); } 100% { transform: translateX(-40%) rotate(-8deg); } }
-
         .glow { position: relative; } .glow::after { content: ''; position: absolute; inset: -30px; background: radial-gradient(circle, rgba(185,28,28,0.2) 0%, transparent 70%); opacity: 0.5; z-index: -1; animation: pulse-glow 6s ease-in-out infinite; }
         @keyframes pulse-glow { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
-
         #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -2; opacity: 0.15; }
-        canvas { width: 100%; height: 70px; filter: contrast(1.3); }
+        #visualizer { width: 100%; height: 120px; filter: contrast(1.4) brightness(1.1); }
     </style>
 </head>
 <body class="min-h-screen pb-12">
     <canvas id="particles"></canvas>
-    <div class="ritual-watermark"></div>
 
     <div class="max-w-md mx-auto px-5 pt-16 text-center">
         <h1 class="script-font font-black tracking-tighter chrome text-5xl glow">DEATHSONG</h1>
         <p class="script-font text-5xl font-black tracking-widest text-red-500">FREQUENCY</p>
         <p class="mt-4 text-zinc-400 text-lg">WILLIAM DEATHSONG • LAYERS OF GROTESQUE TRUTH</p>
 
-        <!-- Featured -->
         <div class="mt-14">
             <p class="uppercase text-xs text-red-500 mb-3 tracking-widest">CREATOR'S FEATURED</p>
-            <div onclick="playFeatured()" class="video-overlay cursor-pointer border-6 border-[#440000] rounded-2xl overflow-hidden glow">
+            <div onclick="playFeatured()" class="video-overlay cursor-pointer border-6 border-[#440000] rounded-2xl overflow-hidden glow relative">
                 <video playsinline class="w-full pointer-events-none" muted>
-                    <source src="https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" type="video/mp4">
+                    <source src="https://docs.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" type="video/mp4">
                 </video>
-                <i class="play-icon fa-solid fa-play"></i>
+                <i class="play-icon fa-solid fa-play absolute inset-0 flex items-center justify-center text-6xl text-red-500/70"></i>
             </div>
         </div>
 
-        <!-- Layers -->
         <div class="mt-16 relative">
             <button onclick="toggleDropdown()" class="small-btn w-full flex justify-between items-center">
                 <span>SELECT LAYER</span>
@@ -61,8 +53,8 @@
 
         <div class="mt-12 bg-zinc-950 border border-zinc-700 rounded-3xl p-4">
             <div class="flex justify-between items-center mb-3">
-                <span class="text-xs">RITUAL AUDIO</span>
-                <button onclick="toggleMusic()" id="music-btn" class="small-btn text-xs px-4">PLAY RITUAL</button>
+                <span class="text-xs">AUDIO</span>
+                <button onclick="toggleMusic()" id="music-btn" class="small-btn text-xs px-4">PLAY</button>
             </div>
             <canvas id="visualizer"></canvas>
         </div>
@@ -74,13 +66,6 @@
             </div>
         </div>
 
-        <!-- Ritual Spin -->
-        <div class="mt-8 bg-zinc-950 border border-red-900 rounded-3xl p-6">
-            <button onclick="spinRitual()" class="small-btn w-full text-xl py-4">SPIN THE RITUAL 💀</button>
-            <p id="spin-result" class="mt-4 text-red-500 font-medium min-h-[1.5em]"></p>
-        </div>
-
-        <!-- E-Slots -->
         <div class="mt-4">
             <button onclick="openSlots()" class="small-btn w-full text-xl py-4 bg-red-900 hover:bg-red-800 text-white">OPEN E-SLOTS MACHINE 🎰</button>
         </div>
@@ -88,7 +73,6 @@
         <div class="mt-16 text-xs text-zinc-500">© DEATHSONG FREQUENCY / WILLIAM DEATHSONG</div>
     </div>
 
-    <!-- Modal -->
     <div id="layer-modal" class="hidden fixed inset-0 bg-black/95 z-50 overflow-y-auto">
         <div class="max-w-md mx-auto p-5">
             <button onclick="closeLayerModal()" class="text-3xl mb-6">✕</button>
@@ -97,15 +81,15 @@
         </div>
     </div>
 
-    <audio id="ritual-audio" loop></audio>
+    <audio id="audio-player" loop></audio>
     <audio id="vault-audio" loop></audio>
 
     <script>
         const videoLibrary = [
-            { layer: "vulgar", title: "Vulgar Grace", src: "https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" },
-            { layer: "stormbound", title: "Stormbound", src: "https://drive.google.com/uc?export=download&id=1QVNZRNaWcY1Cv_wK_YvU5KWLvKKrA9EY" },
-            { layer: "persistence", title: "Persistence", src: "https://drive.google.com/uc?export=download&id=1T4T1KYTNl9PrRvdGOz-tH_XTMVkVlplU" },
-            { layer: "mindvirus", title: "Trans Testicle Mind Virus Defender", src: "https://drive.google.com/uc?export=download&id=1PQO05RTYTOhyBKdfvrVUwYGur3g4p8UK" }
+            { layer: "vulgar", title: "Vulgar Grace", src: "https://docs.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" },
+            { layer: "stormbound", title: "Stormbound", src: "https://docs.google.com/uc?export=download&id=1QVNZRNaWcY1Cv_wK_YvU5KWLvKKrA9EY" },
+            { layer: "persistence", title: "Persistence", src: "https://docs.google.com/uc?export=download&id=1T4T1KYTNl9PrRvdGOz-tH_XTMVkVlplU" },
+            { layer: "mindvirus", title: "Trans Testicle Mind Virus Defender", src: "https://docs.google.com/uc?export=download&id=1PQO05RTYTOhyBKdfvrVUwYGur3g4p8UK" }
         ];
 
         const layers = {};
@@ -113,62 +97,77 @@
             if (!layers[v.layer]) layers[v.layer] = { title: v.layer.toUpperCase().replace(/_/g, ' '), videos: [] };
             layers[v.layer].videos.push({ title: v.title, src: v.src });
         });
-        ["jamhouse","nobody"].forEach(key => layers[key] = { title: key.toUpperCase().replace(/_/g, ' '), videos: [] });
 
-        const featuredVideo = { title: "Featured Ritual", src: "https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" };
+        const featuredVideo = { title: "Featured", src: "https://docs.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" };
 
         const audioLibrary = {
             songs: [
-                { title: "Vulgar Grace", src: "https://drive.google.com/uc?export=download&id=1t_57PmeUs2aFkZnTn69aIDZ6dByPe7E7" },
-                { title: "Stormbound", src: "https://drive.google.com/uc?export=download&id=19RTUAwJnCSSFdsbEn7QQlB4gkn5Vgx79" },
-                { title: "Persistence", src: "https://drive.google.com/uc?export=download&id=134rQi7mvV0CRmD8AiiK_S_hbmrfHUaJK" },
-                { title: "Trans Testicle Mind Virus Defender", src: "https://drive.google.com/uc?export=download&id=14k5Q21WNeYFWDKtfZosUZ_4LyRivYtBJ" }
-            ],
-            podcasts: []
+                { title: "Vulgar Grace", src: "https://docs.google.com/uc?export=download&id=1t_57PmeUs2aFkZnTn69aIDZ6dByPe7E7" },
+                { title: "Stormbound", src: "https://docs.google.com/uc?export=download&id=19RTUAwJnCSSFdsbEn7QQlB4gkn5Vgx79" },
+                { title: "Persistence", src: "https://docs.google.com/uc?export=download&id=134rQi7mvV0CRmD8AiiK_S_hbmrfHUaJK" },
+                { title: "Trans Testicle Mind Virus Defender", src: "https://docs.google.com/uc?export=download&id=14k5Q21WNeYFWDKtfZosUZ_4LyRivYtBJ" }
+            ]
         };
 
         let audioContext, analyser, source, dataArray, isPlaying = false;
         const canvas = document.getElementById('visualizer');
-        const ctx = canvas.getContext('2d');
-        const ritualAudio = document.getElementById('ritual-audio');
+        const ctx = canvas.getContext('2d', { alpha: true });
+        const audioPlayer = document.getElementById('audio-player');
         const vaultAudio = document.getElementById('vault-audio');
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = canvas.offsetWidth * (window.devicePixelRatio || 1);
+            canvas.height = 120 * (window.devicePixelRatio || 1);
+            ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+        }
 
         function initVisualizer() {
             if (audioContext) return;
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            analyser = audioContext.createAnalyser();
-            analyser.fftSize = 128;
-            dataArray = new Uint8Array(analyser.frequencyBinCount);
-            source = audioContext.createMediaElementSource(ritualAudio);
-            source.connect(analyser);
-            analyser.connect(audioContext.destination);
+            try {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                analyser = audioContext.createAnalyser();
+                analyser.fftSize = 256;
+                analyser.smoothingTimeConstant = 0.8;
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                source = audioContext.createMediaElementSource(audioPlayer);
+                source.connect(analyser);
+                analyser.connect(audioContext.destination);
+                resizeCanvas();
+            } catch(e) {}
         }
 
         function drawVisualizer() {
             requestAnimationFrame(drawVisualizer);
-            if (!analyser) return;
+            if (!analyser || !isPlaying) {
+                if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
             analyser.getByteFrequencyData(dataArray);
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            const barWidth = (canvas.width / dataArray.length) * 2.5;
+            const barWidth = (canvas.width / dataArray.length) * 2.2;
             let x = 0;
             for (let i = 0; i < dataArray.length; i++) {
-                const height = (dataArray[i] / 255) * canvas.height * 0.85;
-                ctx.fillStyle = `rgb(200, ${40 + dataArray[i]/2}, 30)`;
+                const height = (dataArray[i] / 255) * canvas.height * 0.95;
+                ctx.fillStyle = `rgb(220, ${30 + dataArray[i]/2}, 20)`;
                 ctx.fillRect(x, canvas.height - height, barWidth, height);
-                x += barWidth + 2;
+                ctx.fillStyle = `rgba(255, 60, 20, 0.6)`;
+                ctx.fillRect(x, canvas.height - height * 0.6, barWidth, height * 0.3);
+                x += barWidth + 1.5;
             }
         }
 
         function toggleMusic() {
             initVisualizer();
             if (isPlaying) {
-                ritualAudio.pause();
-                document.getElementById('music-btn').textContent = 'PLAY RITUAL';
+                audioPlayer.pause();
+                document.getElementById('music-btn').textContent = 'PLAY';
             } else {
-                ritualAudio.src = audioLibrary.songs[0].src; // default to first song
-                ritualAudio.play().catch(() => alert("Tap again - Drive needs permission on first play"));
+                audioPlayer.src = audioLibrary.songs[0].src;
+                audioPlayer.play().then(() => {
+                    drawVisualizer();
+                }).catch(() => alert("Tap PLAY again"));
                 document.getElementById('music-btn').textContent = 'PAUSE';
-                drawVisualizer();
             }
             isPlaying = !isPlaying;
         }
@@ -176,7 +175,7 @@
         function playVaultAudio(src) {
             vaultAudio.pause();
             vaultAudio.src = src;
-            vaultAudio.play().catch(() => alert("Tap again - Drive first play permission"));
+            vaultAudio.play().catch(() => alert("Tap again"));
         }
 
         function showAudioLibrary() {
@@ -197,7 +196,10 @@
             document.getElementById('layer-modal').classList.remove('hidden');
         }
 
-        function toggleDropdown() { document.getElementById('layers-dropdown').classList.toggle('hidden'); }
+        function toggleDropdown() { 
+            const dd = document.getElementById('layers-dropdown');
+            if (dd) dd.classList.toggle('hidden'); 
+        }
 
         function showLayer(key) {
             const layer = layers[key];
@@ -210,30 +212,32 @@
             document.getElementById('layer-modal').classList.remove('hidden');
         }
 
-        function closeLayerModal() { document.getElementById('layer-modal').classList.add('hidden'); }
+        function closeLayerModal() { 
+            const modal = document.getElementById('layer-modal');
+            if (modal) modal.classList.add('hidden'); 
+        }
 
         function playVideo(src) {
             const html = `<video controls autoplay playsinline class="w-full rounded-2xl border-4 border-red-900"><source src="${src}" type="video/mp4"></video><button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE</button>`;
             document.getElementById('playlist').innerHTML = html;
         }
 
-        function spinRitual() {
-            const results = ["VULGAR GRACE CONSUMES ALL", "STORMBOUND UNLEASHED", "PERSISTENCE DEVOURS", "MIND VIRUS DEFENDED", "GROTESQUE TRUTH REVEALED 💀"];
-            document.getElementById('spin-result').textContent = results[Math.floor(Math.random() * results.length)];
-            const keys = Object.keys(layers);
-            if (keys.length) showLayer(keys[Math.floor(Math.random() * keys.length)]);
-        }
-
         function openSlots() {
             window.open('https://beyond-the-prompt.github.io/Deathsong-Frequency-sSlots/', '_blank');
         }
 
-        // Particles
         const pCanvas = document.getElementById('particles');
         const pCtx = pCanvas.getContext('2d');
-        function resizeParticles() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeParticles);
+        function resizeParticles() { 
+            pCanvas.width = window.innerWidth; 
+            pCanvas.height = window.innerHeight; 
+        }
+        window.addEventListener('resize', () => { 
+            resizeParticles(); 
+            resizeCanvas(); 
+        });
         resizeParticles();
+        resizeCanvas();
         function drawParticles() {
             requestAnimationFrame(drawParticles);
             pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
@@ -245,10 +249,12 @@
             }
         }
         drawParticles();
+        drawVisualizer();
 
         document.addEventListener('click', (e) => {
-            if (!e.target.closest('#layers-dropdown') && !e.target.closest('button[onclick="toggleDropdown()"]')) {
-                document.getElementById('layers-dropdown').classList.add('hidden');
+            const dd = document.getElementById('layers-dropdown');
+            if (dd && !e.target.closest('#layers-dropdown') && !e.target.closest('button[onclick="toggleDropdown()"]')) {
+                dd.classList.add('hidden');
             }
         });
     </script>
