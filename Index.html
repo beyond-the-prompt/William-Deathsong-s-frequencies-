@@ -66,6 +66,11 @@
             </div>
         </div>
 
+        <div class="mt-8 bg-zinc-950 border border-red-900 rounded-3xl p-6">
+            <button onclick="randomSong()" class="small-btn w-full text-xl py-4">RANDOM SONG</button>
+            <p id="random-result" class="mt-4 text-red-500 font-medium min-h-[1.5em]"></p>
+        </div>
+
         <div class="mt-4">
             <button onclick="openSlots()" class="small-btn w-full text-xl py-4 bg-red-900 hover:bg-red-800 text-white">OPEN E-SLOTS MACHINE 🎰</button>
         </div>
@@ -164,9 +169,7 @@
                 document.getElementById('music-btn').textContent = 'PLAY';
             } else {
                 audioPlayer.src = audioLibrary.songs[0].src;
-                audioPlayer.play().then(() => {
-                    drawVisualizer();
-                }).catch(() => alert("Tap PLAY again"));
+                audioPlayer.play().then(() => drawVisualizer()).catch(() => alert("Tap PLAY again"));
                 document.getElementById('music-btn').textContent = 'PAUSE';
             }
             isPlaying = !isPlaying;
@@ -196,10 +199,7 @@
             document.getElementById('layer-modal').classList.remove('hidden');
         }
 
-        function toggleDropdown() { 
-            const dd = document.getElementById('layers-dropdown');
-            if (dd) dd.classList.toggle('hidden'); 
-        }
+        function toggleDropdown() { document.getElementById('layers-dropdown').classList.toggle('hidden'); }
 
         function showLayer(key) {
             const layer = layers[key];
@@ -212,14 +212,24 @@
             document.getElementById('layer-modal').classList.remove('hidden');
         }
 
-        function closeLayerModal() { 
-            const modal = document.getElementById('layer-modal');
-            if (modal) modal.classList.add('hidden'); 
-        }
+        function closeLayerModal() { document.getElementById('layer-modal').classList.add('hidden'); }
 
         function playVideo(src) {
             const html = `<video controls autoplay playsinline class="w-full rounded-2xl border-4 border-red-900"><source src="${src}" type="video/mp4"></video><button onclick="closeLayerModal()" class="mt-6 w-full small-btn">CLOSE</button>`;
             document.getElementById('playlist').innerHTML = html;
+        }
+
+        function randomSong() {
+            const randomIndex = Math.floor(Math.random() * audioLibrary.songs.length);
+            const song = audioLibrary.songs[randomIndex];
+            document.getElementById('random-result').textContent = song.title;
+            audioPlayer.src = song.src;
+            audioPlayer.play().then(() => {
+                initVisualizer();
+                isPlaying = true;
+                document.getElementById('music-btn').textContent = 'PAUSE';
+                drawVisualizer();
+            }).catch(() => alert("Tap RANDOM SONG again"));
         }
 
         function openSlots() {
@@ -228,14 +238,8 @@
 
         const pCanvas = document.getElementById('particles');
         const pCtx = pCanvas.getContext('2d');
-        function resizeParticles() { 
-            pCanvas.width = window.innerWidth; 
-            pCanvas.height = window.innerHeight; 
-        }
-        window.addEventListener('resize', () => { 
-            resizeParticles(); 
-            resizeCanvas(); 
-        });
+        function resizeParticles() { pCanvas.width = window.innerWidth; pCanvas.height = window.innerHeight; }
+        window.addEventListener('resize', () => { resizeParticles(); resizeCanvas(); });
         resizeParticles();
         resizeCanvas();
         function drawParticles() {
@@ -252,9 +256,8 @@
         drawVisualizer();
 
         document.addEventListener('click', (e) => {
-            const dd = document.getElementById('layers-dropdown');
-            if (dd && !e.target.closest('#layers-dropdown') && !e.target.closest('button[onclick="toggleDropdown()"]')) {
-                dd.classList.add('hidden');
+            if (!e.target.closest('#layers-dropdown') && !e.target.closest('button[onclick="toggleDropdown()"]')) {
+                document.getElementById('layers-dropdown').classList.add('hidden');
             }
         });
     </script>
