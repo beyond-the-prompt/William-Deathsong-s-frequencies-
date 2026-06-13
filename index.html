@@ -1,534 +1,250 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>DEATHSONG FREQUENCY</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DEATHSONG FREQUENCY</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
 
-<style>
-body{font-family:Inter,sans-serif;background:#000;color:#fff;overflow-x:hidden}
-.script-font{font-family:Cinzel,serif}
-.small-btn{background:linear-gradient(145deg,#e0e0e0,#a0a0a0);color:#000;padding:10px 14px;border-radius:10px}
-.small-btn:active{transform:scale(.98)}
-#particles{position:fixed;inset:0;pointer-events:none;opacity:.12}
-canvas{width:100%}
-.glow{position:relative}
-.glow::after{content:"";position:absolute;inset:-30px;background:radial-gradient(circle,rgba(185,28,28,.25),transparent 70%);z-index:-1}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:50;overflow:auto}
-.dropdown{position:absolute;width:100%;background:#000;border:1px solid #333;margin-top:8px;border-radius:10px;z-index:40}
-.dropdown div{padding:12px}
-.dropdown div:active{background:#111}
-.play-icon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#b91c1c}
-.video-wrap{position:relative}
-</style>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .script-font { font-family: 'Cinzel', serif; }
+
+        .btn-gray {
+            background: #d1d1d1;
+            color: #000;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 4px;
+            text-transform: uppercase;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .btn-gray:active { background: #999; }
+
+        .btn-red {
+            background: #7f1d1d;
+            color: #fff;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 4px;
+            text-transform: uppercase;
+            border: none;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .item-card {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active { display: block; }
+
+        canvas { width: 100%; height: 70px; display: block; background: #080808; border-bottom: 1px solid #111; }
+    </style>
 </head>
 
 <body>
 
-<canvas id="particles"></canvas>
+<div class="max-w-md mx-auto px-4 py-12 text-center">
 
-<div class="max-w-md mx-auto text-center pt-14 px-4">
+    <h1 class="script-font text-4xl mb-1">DEATHSONG</h1>
+    <p class="script-font text-2xl text-red-700 mb-8 font-bold">FREQUENCY</p>
 
-<div class="script-font text-5xl glow">DEATHSONG</div>
-<div class="text-4xl text-red-500 script-font">FREQUENCY</div>
+    <!-- MAIN MEDIA VIEW -->
+    <div class="mb-6 bg-black rounded border border-zinc-800 overflow-hidden">
+        <video id="mainVideo" class="w-full" controls poster="">
+            <source src="https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" type="video/mp4">
+        </video>
+    </div>
 
-<div class="mt-10 text-zinc-400">LAYERS SYSTEM</div>
+    <!-- AUDIO & VIZ -->
+    <div class="mb-8">
+        <canvas id="viz"></canvas>
+        <div class="flex gap-2 mt-4">
+            <button class="btn-gray" id="audioToggle" onclick="toggleAudio()">Play Audio</button>
+            <button class="btn-gray" onclick="stopEverything()">Stop</button>
+        </div>
+        <p id="trackName" class="text-[11px] text-zinc-500 mt-3 uppercase tracking-tighter"></p>
+    </div>
 
-<!-- FEATURED -->
-<div class="mt-8 video-wrap" onclick="openVideo(featured.video)">
-<video muted playsinline class="w-full rounded-xl border border-red-900">
-<source src="https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t">
-</video>
-<div class="play-icon">▶</div>
+    <!-- NAVIGATION -->
+    <div class="grid grid-cols-1 gap-4">
+        <button class="btn-gray" onclick="openModal()">Files</button>
+        <button class="btn-gray" onclick="playRandom()">Random</button>
+        <button class="btn-red" onclick="window.open('https://beyond-the-prompt.github.io/Deathsong-Frequency-sSlots/')">
+            E-Slots 🎰
+        </button>
+    </div>
+
+    <p class="text-zinc-700 text-[10px] mt-16 uppercase">William Deathsong</p>
 </div>
 
-<!-- DROPDOWN -->
-<div class="mt-8 relative">
-<button class="small-btn w-full" onclick="toggleDrop()">SELECT LAYER</button>
-<div id="drop" class="hidden dropdown">
-<div onclick="openLayer('vulgar')">VULGAR GRACE</div>
-<div onclick="openLayer('storm')">STORMBOUND</div>
-<div onclick="openLayer('persist')">PERSISTENCE</div>
-<div onclick="openLayer('virus')">MIND VIRUS DEFENDER</div>
-</div>
-</div>
-
-<!-- AUDIO -->
-<div class="mt-8 border border-zinc-700 rounded-xl p-3">
-<div class="flex justify-between">
-<span>RITUAL AUDIO</span>
-<button class="small-btn" id="btn" onclick="toggleAudio()">PLAY</button>
-</div>
-<canvas id="viz" height="70"></canvas>
+<!-- FILE DIRECTORY -->
+<div id="fileModal" class="modal">
+    <div class="max-w-md mx-auto">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="script-font text-2xl text-red-700">FILES</h2>
+            <button onclick="closeModal()" class="text-white text-4xl">&times;</button>
+        </div>
+        <div id="fileList"></div>
+    </div>
 </div>
 
-<!-- VAULT -->
-<div class="mt-6">
-<button class="small-btn w-full" onclick="openVault()">OPEN VAULT</button>
-</div>
-
-<!-- SPIN -->
-<div class="mt-8 border border-red-900 p-4 rounded-xl">
-<button class="small-btn w-full" onclick="spin()">SPIN</button>
-<div id="spinOut" class="text-red-500 mt-3"></div>
-</div>
-
-</div>
-
-<!-- MODAL -->
-<div id="modal" class="hidden modal p-4">
-<div class="max-w-md mx-auto">
-<button onclick="closeModal()" class="text-2xl">✕</button>
-<div id="modalTitle" class="script-font text-3xl text-red-500 mt-4"></div>
-<div id="modalBody" class="mt-4"></div>
-</div>
-</div>
-
-<audio id="audio"></audio>
+<audio id="audioElement" crossorigin="anonymous"></audio>
 
 <script>
+const fileData = [
+    { name: "vulgargrace", mp3: "1t_57PmeUs2aFkZnTn69aIDZ6dByPe7E7", mp4: "1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t" },
+    { name: "stormbound", mp3: "19RTUAwJnCSSFdsbEn7QQlB4gkn5Vgx79", mp4: "1QVNZRNaWcY1Cv_wK_YvU5KWLvKKrA9EY" },
+    { name: "persistence", mp3: "134rQi7mvV0CRmD8AiiK_S_hbmrfHUaJK", mp4: "1T4T1KYTNl9PrRvdGOz-tH_XTMVkVlplU" },
+    { name: "transmindvirus", mp3: "14k5Q21WNeYFWDKtfZosUZ_4LyRivYtBJ", mp4: "1PQO05RTYTOhyBKdfvrVUwYGur3g4p8UK" },
+    { name: "Autopsy_of_Vulgar_Grace", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "Victor_Grace", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "transvirus", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "podcast1", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "podcast2", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "podcast3", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "podcast4", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "bornyoungage", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "whoami", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "Caboose in Rain", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "Beta Transtestical Mindvirus", mp3: "PASTE_ID", mp4: "PASTE_ID" },
+    { name: "Seattle Vice Fog (1)", mp3: "PASTE_ID", mp4: "PASTE_ID" }
+];
 
-const featured={video:"https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t"};
+const audio = document.getElementById("audioElement");
+const video = document.getElementById("mainVideo");
+let audioCtx, analyser, source, dataArray;
+let isPlaying = false;
 
-const library={
-vulgar:{
-video:"https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t",
-audio:"https://drive.google.com/uc?export=download&id=1t_57PmeUs2aFkZnTn69aIDZ6dByPe7E7"
-},
-storm:{
-video:"https://drive.google.com/uc?export=download&id=1QVNZRNaWcY1Cv_wK_YvU5KWLvKKrA9EY",
-audio:"https://drive.google.com/uc?export=download&id=19RTUAwJnCSSFdsbEn7QQlB4gkn5Vgx79"
-},
-persist:{
-video:"https://drive.google.com/uc?export=download&id=1T4T1KYTNl9PrRvdGOz-tH_XTMVkVlplU",
-audio:"https://drive.google.com/uc?export=download&id=134rQi7mvV0CRmD8AiiK_S_hbmrfHUaJK"
-},
-virus:{
-video:"https://drive.google.com/uc?export=download&id=1PQO05RTYTOhyBKdfvrVUwYGur3g4p8UK",
-audio:"https://drive.google.com/uc?export=download&id=14k5Q21WNeYFWDKtfZosUZ_4LyRivYtBJ"
-}
-};
-
-let current=null;
-let audio=document.getElementById("audio");
-let ctx,analyser,data,playing=false;
-
-function toggleDrop(){
-document.getElementById("drop").classList.toggle("hidden");
-}
-
-function openLayer(k){
-const l=library[k];
-current=l;
-document.getElementById("modalTitle").innerText=k.toUpperCase();
-document.getElementById("modalBody").innerHTML=`
-<img onclick="openVideo('${l.video}')" src="" />
-<button class='small-btn mt-4 w-full' onclick="playAudio('${l.audio}')">PLAY AUDIO</button>
-`;
-document.getElementById("modal").classList.remove("hidden");
+function initAudio() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    source = audioCtx.createMediaElementSource(audio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    analyser.fftSize = 64;
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+    drawViz();
 }
 
-function closeModal(){document.getElementById("modal").classList.add("hidden")}
-
-function openVideo(src){
-document.getElementById("modalTitle").innerText="VIDEO";
-document.getElementById("modalBody").innerHTML=
-`<video controls autoplay class='w-full'><source src='${src}'></video>`;
-document.getElementById("modal").classList.remove("hidden");
+function toggleAudio() {
+    initAudio();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    if (!isPlaying) {
+        if (!audio.src) loadAudio(fileData[0].mp3, fileData[0].name);
+        audio.play();
+        document.getElementById("audioToggle").innerText = "Pause Audio";
+        isPlaying = true;
+    } else {
+        audio.pause();
+        document.getElementById("audioToggle").innerText = "Play Audio";
+        isPlaying = false;
+    }
 }
 
-function playAudio(src){
-audio.src=src;
-audio.play();
-setupViz();
-playing=true;
-draw();
-document.getElementById("btn").innerText="PAUSE";
+function loadAudio(id, name) {
+    initAudio();
+    audio.src = `https://drive.google.com/uc?export=download&id=${id}`;
+    audio.play();
+    isPlaying = true;
+    document.getElementById("audioToggle").innerText = "Pause Audio";
+    document.getElementById("trackName").innerText = name;
+    closeModal();
 }
 
-function toggleAudio(){
-if(!current)return;
-if(!ctx) setupViz();
-if(!playing){
-playAudio(current.audio);
-}else{
-audio.pause();
-playing=false;
-document.getElementById("btn").innerText="PLAY";
-}
-}
-
-function setupViz(){
-ctx=new AudioContext();
-analyser=ctx.createAnalyser();
-data=new Uint8Array(analyser.frequencyBinCount);
-const src=ctx.createMediaElementSource(audio);
-src.connect(analyser);
-analyser.connect(ctx.destination);
+function loadVideo(id, name) {
+    const list = document.getElementById("fileList");
+    list.innerHTML = `
+        <p class="text-red-700 font-bold mb-4 uppercase text-center">${name}</p>
+        <video controls autoplay class="w-full bg-black border border-zinc-800">
+            <source src="https://drive.google.com/uc?export=download&id=${id}" type="video/mp4">
+        </video>
+        <button class="btn-gray mt-6" onclick="openModal()">Return to Files</button>
+    `;
 }
 
-function draw(){
-requestAnimationFrame(draw);
-if(!playing)return;
-analyser.getByteFrequencyData(data);
-const c=document.getElementById("viz");
-const g=c.getContext("2d");
-c.width=c.offsetWidth;
-g.clearRect(0,0,c.width,70);
-let x=0;
-for(let i=0;i<data.length;i++){
-let h=data[i]/255*70;
-g.fillStyle="rgb(200,40,40)";
-g.fillRect(x,70-h,3,h);
-x+=4;
-}
+function stopEverything() {
+    audio.pause();
+    video.pause();
+    isPlaying = false;
+    document.getElementById("audioToggle").innerText = "Play Audio";
 }
 
-function openVault(){
-let html="";
-for(let k in library){
-html+=`<div class='p-3 border border-zinc-700 mt-2'>
-<div>${k.toUpperCase()}</div>
-<button class='small-btn mt-2' onclick="playAudio('${library[k].audio}')">PLAY</button>
-</div>`;
-}
-document.getElementById("modalTitle").innerText="VAULT";
-document.getElementById("modalBody").innerHTML=html;
-document.getElementById("modal").classList.remove("hidden");
-}
+function openModal() {
+    const modal = document.getElementById("fileModal");
+    const list = document.getElementById("fileList");
+    modal.classList.add("active");
+    list.innerHTML = "";
 
-function spin(){
-const r=["GRACE","STORM","PERSIST","VIRUS"];
-document.getElementById("spinOut").innerText=r[Math.random()*r.length|0];
-}
-
-const pc=document.getElementById("particles");
-const px=pc.getContext("2d");
-function p(){
-pc.width=innerWidth;pc.height=innerHeight;
-px.clearRect(0,0,pc.width,pc.height);
-for(let i=0;i<50;i++){
-px.fillStyle="rgba(255,0,0,.2)";
-px.fillRect((Date.now()/30+i*30)%innerWidth,i*20,2,2);
-}
-requestAnimationFrame(p);
-}
-p();
-
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DEATHSONG FREQUENCY</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-<style>
-body { font-family: Inter, system-ui; background:#000; color:#fff; margin:0; overflow-x:hidden; }
-.script-font { font-family: Cinzel, serif; }
-.small-btn { background:#ddd; color:#000; padding:10px 14px; border-radius:10px; }
-.small-btn:active { transform:scale(0.98); }
-
-#particles { position:fixed; inset:0; z-index:-2; opacity:.15; }
-
-canvas { width:100%; height:70px; }
-
-.glow { position:relative; }
-.glow:after { content:""; position:absolute; inset:-20px; background:radial-gradient(circle,rgba(255,0,0,.2),transparent); z-index:-1; }
-</style>
-</head>
-
-<body>
-
-<canvas id="particles"></canvas>
-
-<div class="max-w-md mx-auto p-4 text-center">
-
-<h1 class="script-font text-5xl">DEATHSONG</h1>
-<p class="text-red-500 text-3xl">FREQUENCY</p>
-
-<!-- FEATURE -->
-<div class="mt-10">
-<div onclick="openVideo(featured.mp4)" class="glow cursor-pointer border border-red-900 p-2 rounded-xl">
-<video muted playsinline src="https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t"></video>
-</div>
-</div>
-
-<!-- DROPDOWN -->
-<div class="mt-10 relative">
-<button class="small-btn w-full" onclick="toggleDrop()">SELECT LAYER</button>
-
-<div id="drop" class="hidden absolute w-full bg-black border border-zinc-700 mt-2">
-<div onclick="openLayer('vulgar')" class="p-3 hover:bg-zinc-900">VULGAR GRACE</div>
-<div onclick="openLayer('storm')" class="p-3 hover:bg-zinc-900">STORMBOUND</div>
-<div onclick="openLayer('persist')" class="p-3 hover:bg-zinc-900">PERSISTENCE</div>
-</div>
-</div>
-
-<!-- AUDIO -->
-<div class="mt-10">
-<button class="small-btn" onclick="toggleAudio()">PLAY</button>
-<canvas id="viz"></canvas>
-</div>
-
-<!-- MODAL -->
-<div id="modal" class="hidden fixed inset-0 bg-black/95 p-4">
-<button onclick="closeModal()" class="text-white text-2xl">✕</button>
-<div id="content"></div>
-</div>
-
-<audio id="audio"></audio>
-
-</div>
-
-<script>
-const layers = {
-vulgar:["mp3_1.mp3","mp4_1.mp4"],
-storm:["mp3_2.mp3","mp4_2.mp4"],
-persist:["mp3_3.mp3","mp4_3.mp4"]
-};
-
-let audio=document.getElementById("audio");
-let ctx,viz,audioCtx,analyser,dataArray,playing=false;
-
-function toggleDrop(){
-document.getElementById("drop").classList.toggle("hidden");
+    fileData.forEach(item => {
+        const div = document.createElement("div");
+        div.className = "item-card";
+        div.innerHTML = `
+            <p class="text-xs font-bold mb-3 uppercase text-zinc-400">${item.name}</p>
+            <div class="flex gap-2">
+                <button class="btn-gray" onclick="loadAudio('${item.mp3}', '${item.name}')">Audio</button>
+                <button class="btn-gray" onclick="loadVideo('${item.mp4}', '${item.name}')">Video</button>
+            </div>
+        `;
+        list.appendChild(div);
+    });
 }
 
-function openLayer(name){
-let html="";
-layers[name].forEach(src=>{
-html += `<div onclick="openVideo('${src}')" class="p-3 border mb-2">${src}</div>`;
-});
-document.getElementById("content").innerHTML=html;
-document.getElementById("modal").classList.remove("hidden");
+function closeModal() { document.getElementById("fileModal").classList.remove("active"); }
+
+function playRandom() {
+    const r = fileData[Math.floor(Math.random() * fileData.length)];
+    loadAudio(r.mp3, r.name);
 }
 
-function closeModal(){
-document.getElementById("modal").classList.add("hidden");
-audio.pause();
+// VISUALIZER ENGINE
+const canvas = document.getElementById("viz");
+const ctx = canvas.getContext("2d");
+function drawViz() {
+    requestAnimationFrame(drawViz);
+    if (!isPlaying) { ctx.clearRect(0,0,canvas.width, canvas.height); return; }
+    analyser.getByteFrequencyData(dataArray);
+    canvas.width = canvas.offsetWidth;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const spacing = canvas.width / dataArray.length;
+    for (let i = 0; i < dataArray.length; i++) {
+        const height = (dataArray[i] / 255) * canvas.height;
+        ctx.fillStyle = "#991b1b";
+        ctx.fillRect(i * spacing, canvas.height - height, spacing - 1, height);
+    }
 }
-
-function openVideo(src){
-audio.src=src;
-audio.play();
-initViz();
-}
-
-function toggleAudio(){
-audio.src=layers.vulgar[0];
-audio.play();
-initViz();
-}
-
-function initViz(){
-if(audioCtx) return;
-audioCtx=new AudioContext();
-analyser=audioCtx.createAnalyser();
-let src=audioCtx.createMediaElementSource(audio);
-src.connect(analyser);
-analyser.connect(audioCtx.destination);
-dataArray=new Uint8Array(analyser.frequencyBinCount);
-draw();
-}
-
-function draw(){
-requestAnimationFrame(draw);
-if(!analyser) return;
-analyser.getByteFrequencyData(dataArray);
-let c=document.getElementById("viz");
-let x=c.getContext("2d");
-c.width=c.offsetWidth;
-c.height=70;
-x.clearRect(0,0,c.width,c.height);
-let bar=c.width/dataArray.length;
-for(let i=0;i<dataArray.length;i++){
-x.fillStyle="red";
-x.fillRect(i*bar,c.height-dataArray[i]/2,bar,50);
-}
-}
-
-let p=document.getElementById("particles");
-let pctx=p.getContext("2d");
-
-function particleLoop(){
-requestAnimationFrame(particleLoop);
-p.width=innerWidth;p.height=innerHeight;
-pctx.fillStyle="rgba(255,0,0,.3)";
-for(let i=0;i<40;i++){
-pctx.fillRect((Date.now()/10+i*50)%p.width,i*20%p.height,2,2);
-}
-}
-particleLoop();
 </script>
 
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>DEATHSONG FREQUENCY</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
-<style>
-body{margin:0;background:#000;color:#fff;font-family:Inter}
-.script-font{font-family:Cinzel}
-.small-btn{background:#ddd;color:#000;padding:10px 14px;border-radius:8px}
-canvas{width:100%;height:70px}
-#particles{position:fixed;inset:0;z-index:-1;opacity:.15}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.95);display:none;overflow:auto}
-</style>
-</head>
-
-<body>
-
-<canvas id="particles"></canvas>
-
-<div style="max-width:520px;margin:auto;padding:20px;text-align:center">
-
-<h1 class="script-font">DEATHSONG</h1>
-<h2 style="color:red">FREQUENCY</h2>
-
-<!-- FEATURE -->
-<div onclick="playFeatured()" style="cursor:pointer;border:1px solid #300;padding:10px">
-<video muted playsinline src="https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t"></video>
-</div>
-
-<!-- DROPDOWN -->
-<button class="small-btn" onclick="toggleDrop()">SELECT LAYER</button>
-<div id="drop" style="display:none;background:#111">
-<div onclick="openLayer('vulgar')">VULGAR GRACE</div>
-<div onclick="openLayer('storm')">STORMBOUND</div>
-<div onclick="openLayer('persist')">PERSISTENCE</div>
-</div>
-
-<!-- AUDIO -->
-<button class="small-btn" onclick="toggleAudio()">PLAY AUDIO</button>
-<canvas id="viz"></canvas>
-
-<!-- MODAL -->
-<div id="modal" class="modal">
-<div style="padding:20px">
-<button onclick="closeModal()" style="font-size:24px">✕</button>
-<div id="content"></div>
-</div>
-</div>
-
-<audio id="audio"></audio>
-
-</div>
-
-<script>
-
-/* ================= DATA (YOUR SYSTEM PRESERVED) ================= */
-
-const layers = {
-vulgar:[
-{type:"mp3",src:"https://drive.google.com/uc?export=download&id=1t_57PmeUs2aFkZnTn69aIDZ6dByPe7E7"},
-{type:"mp4",src:"https://drive.google.com/uc?export=download&id=1r9Lt7xvuLlda5NDpqr6aRwj5ueEife1t"}
-],
-storm:[
-{type:"mp3",src:"https://drive.google.com/uc?export=download&id=19RTUAwJnCSSFdsbEn7QQlB4gkn5Vgx79"},
-{type:"mp4",src:"https://drive.google.com/uc?export=download&id=1QVNZRNaWcY1Cv_wK_YvU5KWLvKKrA9EY"}
-],
-persist:[
-{type:"mp3",src:"https://drive.google.com/uc?export=download&id=134rQi7mvV0CRmD8AiiK_S_hbmrfHUaJK"},
-{type:"mp4",src:"https://drive.google.com/uc?export=download&id=1T4T1KYTNl9PrRvdGOz-tH_XTMVkVlplU"}
-]
-};
-
-/* ================= AUDIO CORE ================= */
-
-let audio=document.getElementById("audio");
-let ctx,viz,audioCtx,analyser,dataArray,playing=false;
-
-function toggleDrop(){
-document.getElementById("drop").style.display =
-document.getElementById("drop").style.display==="none"?"block":"none";
-}
-
-function openLayer(name){
-let html="";
-layers[name].forEach(v=>{
-html+=`<div onclick="play('${v.src}')" style="padding:10px;border-bottom:1px solid #333">${v.type.toUpperCase()}</div>`;
-});
-document.getElementById("content").innerHTML=html;
-document.getElementById("modal").style.display="block";
-}
-
-function closeModal(){
-document.getElementById("modal").style.display="none";
-audio.pause();
-}
-
-function play(src){
-audio.src=src;
-audio.play();
-initViz();
-}
-
-function toggleAudio(){
-audio.src=layers.vulgar[0].src;
-audio.play();
-initViz();
-}
-
-function initViz(){
-if(audioCtx) return;
-audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-analyser=audioCtx.createAnalyser();
-let src=audioCtx.createMediaElementSource(audio);
-src.connect(analyser);
-analyser.connect(audioCtx.destination);
-dataArray=new Uint8Array(analyser.frequencyBinCount);
-draw();
-}
-
-function draw(){
-requestAnimationFrame(draw);
-if(!analyser)return;
-analyser.getByteFrequencyData(dataArray);
-let c=document.getElementById("viz");
-let x=c.getContext("2d");
-c.width=c.offsetWidth;
-c.height=70;
-x.clearRect(0,0,c.width,c.height);
-let bar=c.width/dataArray.length;
-for(let i=0;i<dataArray.length;i++){
-x.fillStyle="red";
-x.fillRect(i*bar,c.height-dataArray[i]/2,bar,50);
-}
-}
-
-/* ================= PARTICLES ================= */
-
-let p=document.getElementById("particles");
-let pctx=p.getContext("2d");
-
-function particles(){
-requestAnimationFrame(particles);
-p.width=innerWidth;
-p.height=innerHeight;
-pctx.fillStyle="rgba(255,0,0,.3)";
-for(let i=0;i<40;i++){
-pctx.fillRect((Date.now()/10+i*40)%p.width,(i*30)%p.height,2,2);
-}
-}
-particles();
-
-</script>
 </body>
 </html>
